@@ -1,0 +1,146 @@
+[
+  {
+    "slug": "kits-couverts-bois-et-papier",
+    "name": "Kits couverts (Bois & Papier compressé)",
+    "category": "Couverts",
+    "image": "/images/kit_couvert_bois.png",
+    "description": "Kits 3/1 et 4/1 en bois ou papier compressé imperméable.",
+    "template": "double",
+    "variants": [
+      {
+        "reference": "HOT-KIT41B-500",
+        "libelle": "Kits couverts 4/1 15 cm",
+        "format": "15 cm",
+        "matiere": "Bois",
+        "cond": "500",
+        "carton": "14"
+      },
+      {
+        "reference": "HOT-KIT31B-500",
+        "libelle": "Kits couverts 3/1 15 cm",
+        "format": "15 cm",
+        "matiere": "Bois",
+        "cond": "500",
+        "carton": "14"
+      },
+      {
+        "reference": "FOX-COV-300-4-1",
+        "libelle": "Kit couverts 4/1 14 cm",
+        "format": "14 cm",
+        "matiere": "Papier compressé imperméable",
+        "cond": "300",
+        "carton": "24"
+      },
+      {
+        "reference": "FOX-COV-3-1-300",
+        "libelle": "Kit couverts 3/1 14 cm",
+        "format": "14 cm",
+        "matiere": "Papier compressé imperméable",
+        "cond": "300",
+        "carton": "24"
+      }
+    ]
+  },
+  {
+    "slug": "kits-couverts-noyaux-olive",
+    "name": "Kits couverts en noyaux d’olives",
+    "category": "Couverts",
+    "image": "/images/kit_couvert_NO.png",
+    "description": "Matière issue de noyaux d’olives récupérés, 3/1 et 4/1.",
+    "template": "double",
+    "variants": [
+      {
+        "reference": "FOX-COV-OLI-250",
+        "libelle": "Kits couverts 4/1 16 cm",
+        "format": "16 cm",
+        "matiere": "Noyaux d’olives",
+        "cond": "250",
+        "carton": "28"
+      },
+      {
+        "reference": "Fox-COV-OLI-250-1",
+        "libelle": "Kit couverts 3/1 16 cm",
+        "format": "16 cm",
+        "matiere": "Noyaux d’olives",
+        "cond": "250",
+        "carton": "28"
+      }
+    ]
+  },
+  {
+    "slug": "boites-economiques-xps",
+    "name": "Boîtes économiques (XPS)",
+    "category": "Vente à emporter",
+    "image": "/images/barquette_xps.png",
+    "description": "Boîtes burger et sandwich en XPS.",
+    "template": "double",
+    "variants": [
+      {
+        "reference": "KLPD-BURG-125",
+        "libelle": "Boîte Burger XPS",
+        "format": "145 x 136 x 75 mm",
+        "matiere": "XPS",
+        "cond": "1000",
+        "carton": "8"
+      },
+      {
+        "reference": "KLPD-SAND-125",
+        "libelle": "Boîte Sandwich XPS",
+        "format": "185 x 133 x 75 mm",
+        "matiere": "XPS",
+        "cond": "1000",
+        "carton": "5"
+      }
+    ]
+  },
+  {
+    "slug": "pailles",
+    "name": "Pailles",
+    "category": "Boissons",
+    "image": "./images/pailles.png",
+    "description": "Pailles en noyaux d’olive/avocat et carton.",
+    "template": "double",
+    "variants": [
+      {
+        "reference": "FOX-STR-20-8-500-OLI-N",
+        "libelle": "Smoothies 20 cm",
+        "format": "8 mm",
+        "matiere": "Noires – Noyaux d’olive",
+        "cond": "500",
+        "carton": "40"
+      },
+      {
+        "reference": "FOX-STR-20-6-250-AVO-N",
+        "libelle": "Classique 20 cm",
+        "format": "6 mm",
+        "matiere": "Noires – Noyaux d’avocat",
+        "cond": "250",
+        "carton": "40"
+      },
+      {
+        "reference": "FOX-STR-14-6-500-OLI-N",
+        "libelle": "Cocktail 14 cm",
+        "format": "6 mm",
+        "matiere": "Noires – Noyaux d’olive",
+        "cond": "500",
+        "carton": "40"
+      },
+      {
+        "reference": "FOX-STR-20-6-500-OLI-N",
+        "libelle": "Classique 20 cm",
+        "format": "6 mm",
+        "matiere": "Noires – Noyaux d’olive",
+        "cond": "500",
+        "carton": "45"
+      },
+      {
+        "reference": "PUB-PAILLE-500",
+        "libelle": "Carton 20 cm",
+        "format": "6 mm",
+        "matiere": "Carton",
+        "cond": "500",
+        "carton": "40"
+      }
+    ]
+  }
+]
