@@ -1,73 +1,45 @@
-# React + TypeScript + Vite
+<h1 align="center" style="color:#17196c;">
+✨ Catalogue FoxyTable ✨
+</h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+  <img src="https://github.com/Juloh-tuc/catalogue_foxy/assets/logo_foxytable.png" alt="Logo FoxyTable" width="120"/>
+</p>
 
-Currently, two official plugins are available:
+<p align="center">
+  <b>De l’usine à votre table, l’esprit Foxy 🦊</b><br/>
+  Catalogue digital développé en <b>React + Tailwind CSS</b>, inspiré du design Canva original.
+</p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+### 🌿 À propos
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+Chez **FoxyTable**, nous simplifions chaque étape pour offrir une expérience fluide et esthétique.  
+Ce projet reproduit notre **catalogue professionnel**, en version web interactive.
 
-## Expanding the ESLint configuration
+- 🧁 Design doux et épuré, fidèle à la charte FoxyTable  
+- ⚡️ Pages générées automatiquement à partir d’un fichier `products.json`  
+- 💅 Développement mobile-first et éco-conçu  
+- 🎨 Gestion simple des visuels via `/public/images/`
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 🧩 Stack technique
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Outil | Utilisation |
+|--------|--------------|
+| ⚛️ React + Vite | Base du projet |
+| 🎀 Tailwind CSS v3 | Design system Foxy |
+| 🧭 React Router | Navigation entre pages produits |
+| 📦 JSON local | Source de données produits |
+| 💾 GitHub | Versionnage & déploiement |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 🚀 Installation
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Clone le projet :
+```bash
+git clone https://github.com/Juloh-tuc/catalogue_foxy.git
+cd catalogue_foxy/vite-project

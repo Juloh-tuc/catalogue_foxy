@@ -1,158 +1,311 @@
+// src/templates/ProductTemplates.tsx
 import React from "react";
+import type { ReactNode } from "react";
 
-export type Variant = { 
-  reference: string; 
-  libelle: string; 
-  format?: string; 
-  matiere?: string; 
-  cond?: string; 
-  carton?: string 
+/* ========= Types ========= */
+export type SpecRow = {
+  reference: string;
+  format: string;
+  divers: string;
+  sac?: string;
+  carton?: string;
+  palette?: string;
 };
 
 export type ProductRecord = {
   slug: string;
-  name: string;
+  title: string;
+  subtitle?: string;
+  image: string;
+  heroImage?: string;
+  specs: SpecRow[];
+  template?: "double" | "single";
   category?: string;
-  image?: string;
   description?: string;
-  template: "simple" | "double" | "hero";
-  specs?: Record<string, string>;
-  bullets?: string[];
-  variants?: Variant[];
+  packaging?: { temperature?: string };
+  bottomNote?: string;
+  bottomBadge?: string;
 };
 
-// -------------------
-// Structure de base
-// -------------------
-const Page: React.FC<React.PropsWithChildren<{ className?: string }>> = ({ children, className }) => (
-  <section
-    className={`mx-auto my-6 w-full max-w-[900px] bg-[#fff8f0] text-[#17196c] p-6 md:p-10 ${
-      className || ""
-    }`}
-  >
-    {children}
-  </section>
-);
+/* ========= Thème ========= */
+export const FOXY_COLORS = {
+  beige: "#fff8f0",
+  bleu: "#191970",
+  orange: "#e5813e",
+} as const;
 
-const Divider = ({ className = "" }) => (
-  <div className={`h-[3px] w-28 rounded-full bg-[#e5813e] ${className}`} />
-);
+/* ========= Grille commune (évite tout décalage) ========= */
+export const SHEET_ROWS = "12% 28% 45% 8%"; // header / top-block / hero / note
 
-// -------------------
-// Template simple
-// -------------------
-export const SimpleTemplate: React.FC<{ p: ProductRecord }> = ({ p }) => (
-  <Page>
-    <h1 className="text-3xl md:text-4xl font-extrabold">{p.name}</h1>
-    <Divider className="my-3" />
-    <div className="grid md:grid-cols-2 gap-6">
-      {p.image && (
-        <img
-          src={p.image}
-          alt={p.name}
-          className="rounded-xl border border-[#17196c]/10 object-cover w-full"
-        />
-      )}
-      <div className="space-y-3 text-sm leading-relaxed">
-        {p.description && <p>{p.description}</p>}
-        {p.specs && (
-          <table className="min-w-full text-sm border border-[#17196c]/10 rounded-lg overflow-hidden bg-white">
-            <tbody>
-              {Object.entries(p.specs).map(([k, v]) => (
-                <tr key={k} className="odd:bg-[#17196c]/[0.03]">
-                  <td className="px-3 py-2 font-semibold capitalize">{k}</td>
-                  <td className="px-3 py-2">{v || "-"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+/* ========= Cadres ========= */
+export function CatalogSheet({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className="
+        w-full max-w-[1080px]
+        shadow-xl rounded-xl
+        px-6 md:px-8 pt-6 md:pt-8 pb-6
+        mx-auto
+        aspect-[210/297]
+        overflow-hidden relative
+        print:shadow-none print:rounded-none print:aspect-auto
+        flex
+        self-start
+      "
+      style={{ background: FOXY_COLORS.beige, color: FOXY_COLORS.bleu }}
+    >
+      <div
+        className="relative h-full w-full grid gap-4 md:gap-5"
+        style={{ gridTemplateRows: SHEET_ROWS }}
+      >
+        {children}
+      </div>
+      <PageFooter />
+    </div>
+  );
+}
+
+function CatalogPage({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className="min-h-screen w-full flex items-start justify-center py-6 md:py-10"
+      style={{ background: "#ffffff" }}
+    >
+      <CatalogSheet>{children}</CatalogSheet>
+    </div>
+  );
+}
+
+/* ========= Éléments ========= */
+export function PageHeader({
+  title,
+  subtitle,
+  temperature,
+}: {
+  title: string;
+  subtitle?: string;
+  temperature?: string;
+}) {
+  // header occupe TOUTE la 1ère rangée → on centre verticalement et on neutralise les marges
+  return (
+    <header className="w-full h-full flex items-center">
+      <div className="flex items-start justify-between gap-4 w-full">
+        <div className="text-center mx-auto">
+          <h1
+            className="font-maeven text-[clamp(20px,2.6vw,34px)] font-semibold tracking-tight m-0"
+            style={{ color: FOXY_COLORS.bleu }}
+          >
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="font-roboto text-[clamp(12px,1.4vw,16px)] opacity-90 mt-1 mb-0">
+              {subtitle}
+            </p>
+          )}
+          <div
+            className="h-1 w-40 mx-auto mt-3 rounded-full"
+            style={{ background: FOXY_COLORS.orange }}
+          />
+        </div>
+
+        {temperature && (
+          <div className="hidden md:flex items-center gap-1 text-xs md:text-sm translate-y-1">
+            <img
+              src="/images/temperature.png"
+              alt="Température"
+              className="h-5 w-5 object-contain"
+            />
+            <span className="font-roboto">{temperature}</span>
+          </div>
         )}
       </div>
-    </div>
-  </Page>
-);
+    </header>
+  );
+}
 
-// -------------------
-// Template double
-// -------------------
-export const DoubleTemplate: React.FC<{ p: ProductRecord }> = ({ p }) => (
-  <Page>
-    <h1 className="text-3xl md:text-4xl font-extrabold">{p.name}</h1>
-    <Divider className="my-3" />
-    {p.description && <p className="mb-4">{p.description}</p>}
-    <div className="grid md:grid-cols-[1.2fr_0.8fr] gap-6 items-start">
-      <div className="overflow-x-auto rounded-xl border border-[#17196c]/10 bg-white">
-        <table className="min-w-full text-sm">
-          <thead className="bg-[#17196c]/5">
-            <tr className="text-left">
-              <th className="px-4 py-2">Référence</th>
-              <th className="px-4 py-2">Libellé</th>
-              <th className="px-4 py-2">Format</th>
-              <th className="px-4 py-2">Matière</th>
-              <th className="px-4 py-2">Cond.</th>
-              <th className="px-4 py-2">Carton</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(p.variants || []).map((v, i) => (
-              <tr key={v.reference} className={i % 2 ? "bg-white" : "bg-[#17196c]/[0.03]"}>
-                <td className="px-4 py-2 font-medium whitespace-nowrap">{v.reference}</td>
-                <td className="px-4 py-2">{v.libelle}</td>
-                <td className="px-4 py-2">{v.format || "-"}</td>
-                <td className="px-4 py-2">{v.matiere || "-"}</td>
-                <td className="px-4 py-2">{v.cond || "-"}</td>
-                <td className="px-4 py-2">{v.carton || "-"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+function PageFooter() {
+  return (
+    <footer className="absolute bottom-4 left-0 w-full px-6 md:px-8">
+      <div
+        className="h-[3px] w-full rounded-full mb-2"
+        style={{ background: FOXY_COLORS.bleu }}
+      />
+      <div className="flex items-center justify-between text-[11px] md:text-xs opacity-90">
+        <div className="flex items-center gap-3">
+          <img
+            src="/images/Logo_foxy.png"
+            alt="FoxyTable"
+            className="h-6 object-contain"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <span className="font-roboto" style={{ color: FOXY_COLORS.orange }}>
+          foxytable.com
+        </span>
       </div>
-      {p.image && (
-        <img
-          src={p.image}
-          alt={p.name}
-          className="rounded-xl border border-[#17196c]/10 object-cover w-full"
-        />
-      )}
-    </div>
-  </Page>
-);
+    </footer>
+  );
+}
 
-// -------------------
-// Template hero
-// -------------------
-export const HeroTemplate: React.FC<{ p: ProductRecord }> = ({ p }) => (
-  <Page>
-    <div className="grid md:grid-cols-2 gap-8 items-center">
-      <div>
-        <h1 className="text-3xl md:text-5xl font-extrabold">{p.name}</h1>
-        <Divider className="my-4" />
-        {p.description && <p className="text-lg opacity-90">{p.description}</p>}
-        <ul className="mt-5 space-y-2">
-          {(p.bullets || []).map((b, i) => (
-            <li key={i} className="flex items-start gap-2">
-              <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#e5813e]" />
-              <span>{b}</span>
-            </li>
+/* ========= Tableau ========= */
+function SpecTable({ rows }: { rows: SpecRow[] }) {
+  const cols = "grid-cols-[1.1fr_0.9fr_1.1fr_0.55fr_0.55fr_0.55fr]";
+  const cell = "py-2.5 px-3";
+  return (
+    <div className="h-full w-full rounded-lg border border-[#191970]/40 overflow-hidden bg-white flex flex-col">
+      <div
+        className={`grid ${cols} text-[13px] md:text-sm font-roboto font-semibold border-b border-[#191970]/40`}
+      >
+        <div className={cell}>Référence</div>
+        <div className={cell}>Format</div>
+        <div className={cell}>Divers</div>
+        <div className={`${cell} flex items-center justify-center`} title="Sachet">
+          <img src="/images/sac.png" alt="Sachet" className="h-5 w-5 object-contain" />
+        </div>
+        <div className={`${cell} flex items-center justify-center`} title="Carton">
+          <img src="/images/carton.png" alt="Carton" className="h-5 w-5 object-contain" />
+        </div>
+        <div className={`${cell} flex items-center justify-center`} title="Palette">
+          <img src="/images/palette.png" alt="Palette" className="h-5 w-5 object-contain" />
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-hidden">
+        <div className="divide-y divide-[#191970]/20">
+          {rows.map((r, i) => (
+            <div
+              key={i}
+              className={`grid ${cols} text-[13px] md:text-sm ${
+                i % 2 ? "bg-gray-50" : "bg-white"
+              }`}
+            >
+              <div className={`${cell} font-semibold text-[#191970]`}>{r.reference}</div>
+              <div className={`${cell} text-gray-800`}>{r.format}</div>
+              <div className={`${cell} text-gray-800`}>{r.divers}</div>
+              <div className={`${cell} text-center text-gray-800`}>{r.sac ?? "-"}</div>
+              <div className={`${cell} text-center text-gray-800`}>{r.carton ?? "-"}</div>
+              <div className={`${cell} text-center text-gray-800`}>{r.palette ?? "-"}</div>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
-      {p.image && (
-        <img
-          src={p.image}
-          alt={p.name}
-          className="rounded-2xl border border-[#17196c]/10 object-cover w-full"
-        />
-      )}
     </div>
-  </Page>
-);
+  );
+}
 
-// -------------------
-// Sélecteur de template
-// -------------------
-export const renderByTemplate = (p: ProductRecord) => {
-  if (p.template === "double") return <DoubleTemplate p={p} />;
-  if (p.template === "hero") return <HeroTemplate p={p} />;
-  return <SimpleTemplate p={p} />;
-};
+/* ========= Templates ========= */
+function DoubleTemplateSheet({ product }: { product: ProductRecord }) {
+  const hero = product.heroImage || product.image;
+
+  return (
+    <>
+      {/* row 1 : header */}
+      <div className="row-start-1 row-end-2">
+        <PageHeader
+          title={product.title}
+          subtitle={product.subtitle}
+          temperature={product.packaging?.temperature}
+        />
+      </div>
+
+      {/* row 2 : image + tableau */}
+      <section className="row-start-2 row-end-3 grid grid-cols-1 md:grid-cols-[32%_4%_64%] items-stretch h-full">
+        <div className="rounded-lg overflow-hidden border border-[#191970]/40 bg-white h-full">
+          <img
+            src={product.image}
+            alt={product.title}
+            className="w-full h-full object-contain md:object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div className="hidden md:block" />
+        <div className="h-full min-h-0">
+          <SpecTable rows={product.specs} />
+        </div>
+      </section>
+
+      {/* row 3 : grand visuel */}
+      <section className="row-start-3 row-end-4 rounded-xl overflow-hidden border border-[#191970]/40 bg-white h-full">
+        <img
+          src={hero}
+          alt={`${product.title} - ambiance`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      </section>
+
+      {/* row 4 : note/badge */}
+      <section className="row-start-4 row-end-5 h-full">
+        <div className="rounded-xl border border-dashed border-[#191970]/30 p-3 md:p-4 bg-white/60 h-full flex items-center justify-between">
+          <p className="font-roboto text-sm md:text-base leading-relaxed mr-3">
+            {product.bottomNote || "Espace libre (encart, promo, “bon plan Foxy”…)"}
+          </p>
+          {product.bottomBadge && (
+            <span
+              className="inline-block text-xs md:text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap"
+              style={{ backgroundColor: `${FOXY_COLORS.orange}22`, color: FOXY_COLORS.orange }}
+            >
+              {product.bottomBadge}
+            </span>
+          )}
+        </div>
+      </section>
+    </>
+  );
+}
+
+function SingleTemplateSheet({ product }: { product: ProductRecord }) {
+  const hero = product.heroImage || product.image;
+
+  return (
+    <>
+      <div className="row-start-1 row-end-2">
+        <PageHeader
+          title={product.title}
+          subtitle={product.subtitle}
+          temperature={product.packaging?.temperature}
+        />
+      </div>
+
+      <div className="row-start-2 row-end-3 rounded-xl overflow-hidden border border-[#191970]/40 bg-white h-full">
+        <img
+          src={hero}
+          alt={product.title}
+          className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+
+      <div className="row-start-3 row-end-4 h-full" />
+
+      <div className="row-start-4 row-end-5 h-full">
+        <SpecTable rows={product.specs} />
+      </div>
+    </>
+  );
+}
+
+/* ========= API ========= */
+export function renderByTemplate(product: ProductRecord) {
+  switch (product.template) {
+    case "single":
+      return (
+        <CatalogPage>
+          <SingleTemplateSheet product={product} />
+        </CatalogPage>
+      );
+    case "double":
+    default:
+      return (
+        <CatalogPage>
+          <DoubleTemplateSheet product={product} />
+        </CatalogPage>
+      );
+  }
+}
+
+export default renderByTemplate;
