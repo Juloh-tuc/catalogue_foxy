@@ -34,8 +34,8 @@ export const FOXY_COLORS = {
   orange: "#e5813e",
 } as const;
 
-/* ========= Grille commune (évite tout décalage) ========= */
-export const SHEET_ROWS = "12% 28% 45% 8%"; // header / top-block / hero / note
+/* ========= Grille commune ========= */
+export const SHEET_ROWS = "12% 28% 45% 8%";
 
 /* ========= Cadres ========= */
 export function CatalogSheet({ children }: { children: ReactNode }) {
@@ -48,7 +48,6 @@ export function CatalogSheet({ children }: { children: ReactNode }) {
         mx-auto
         aspect-[210/297]
         overflow-hidden relative
-        print:shadow-none print:rounded-none print:aspect-auto
         flex
         self-start
       "
@@ -76,7 +75,7 @@ function CatalogPage({ children }: { children: ReactNode }) {
   );
 }
 
-/* ========= Éléments ========= */
+/* ========= Header ========= */
 export function PageHeader({
   title,
   subtitle,
@@ -86,7 +85,6 @@ export function PageHeader({
   subtitle?: string;
   temperature?: string;
 }) {
-  // header occupe TOUTE la 1ère rangée → on centre verticalement et on neutralise les marges
   return (
     <header className="w-full h-full flex items-center">
       <div className="flex items-start justify-between gap-4 w-full">
@@ -123,6 +121,7 @@ export function PageHeader({
   );
 }
 
+/* ========= Footer ========= */
 function PageFooter() {
   return (
     <footer className="absolute bottom-4 left-0 w-full px-6 md:px-8">
@@ -198,6 +197,21 @@ function SpecTable({ rows }: { rows: SpecRow[] }) {
 function DoubleTemplateSheet({ product }: { product: ProductRecord }) {
   const hero = product.heroImage || product.image;
 
+  // Règles spécifiques
+  const hideBottomHero =
+    product.slug?.toLowerCase() === "kits-couverts-bois-et-papier" ||
+    product.slug?.toLowerCase() === "kits-couverts-noyaux-olive";
+  const hideTopImage =
+    product.slug?.toLowerCase() === "boites-economiques-xps";
+
+  // Image spéciale pour le film étirable
+  const isFilmEtirable = product.slug?.toLowerCase() === "film-etirable";
+  const filmImage = "/images/film_cuisine.png";
+
+  const row2Cols = hideTopImage
+    ? "grid-cols-1"
+    : "md:grid-cols-[32%_4%_64%] grid-cols-1";
+
   return (
     <>
       {/* row 1 : header */}
@@ -209,32 +223,45 @@ function DoubleTemplateSheet({ product }: { product: ProductRecord }) {
         />
       </div>
 
-      {/* row 2 : image + tableau */}
-      <section className="row-start-2 row-end-3 grid grid-cols-1 md:grid-cols-[32%_4%_64%] items-stretch h-full">
-        <div className="rounded-lg overflow-hidden border border-[#191970]/40 bg-white h-full">
-          <img
-            src={product.image}
-            alt={product.title}
-            className="w-full h-full object-contain md:object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div className="hidden md:block" />
+      {/* row 2 : image (optionnelle) + tableau */}
+      <section className={`row-start-2 row-end-3 grid items-stretch h-full ${row2Cols}`}>
+        {!hideTopImage && (
+          <>
+            <div className="rounded-lg overflow-hidden border border-[#191970]/40 bg-white h-full">
+              <img
+                src={product.image}
+                alt={product.title}
+                className="w-full h-full object-contain md:object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div className="hidden md:block" />
+          </>
+        )}
+
         <div className="h-full min-h-0">
           <SpecTable rows={product.specs} />
         </div>
       </section>
 
-      {/* row 3 : grand visuel */}
+      {/* row 3 : grande image du bas */}
       <section className="row-start-3 row-end-4 rounded-xl overflow-hidden border border-[#191970]/40 bg-white h-full">
-        <img
-          src={hero}
-          alt={`${product.title} - ambiance`}
-          className="w-full h-full object-cover"
-          loading="lazy"
-          decoding="async"
-        />
+        {hideBottomHero ? (
+          <div className="w-full h-full grid place-items-center">
+            <span className="text-[#191970]/40 text-sm italic">
+              Espace libre (visuel à venir)
+            </span>
+          </div>
+        ) : (
+          <img
+            src={isFilmEtirable ? filmImage : hero}
+            alt={`${product.title} - ambiance`}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        )}
       </section>
 
       {/* row 4 : note/badge */}
@@ -257,55 +284,13 @@ function DoubleTemplateSheet({ product }: { product: ProductRecord }) {
   );
 }
 
-function SingleTemplateSheet({ product }: { product: ProductRecord }) {
-  const hero = product.heroImage || product.image;
-
-  return (
-    <>
-      <div className="row-start-1 row-end-2">
-        <PageHeader
-          title={product.title}
-          subtitle={product.subtitle}
-          temperature={product.packaging?.temperature}
-        />
-      </div>
-
-      <div className="row-start-2 row-end-3 rounded-xl overflow-hidden border border-[#191970]/40 bg-white h-full">
-        <img
-          src={hero}
-          alt={product.title}
-          className="w-full h-full object-cover"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-
-      <div className="row-start-3 row-end-4 h-full" />
-
-      <div className="row-start-4 row-end-5 h-full">
-        <SpecTable rows={product.specs} />
-      </div>
-    </>
-  );
-}
-
 /* ========= API ========= */
 export function renderByTemplate(product: ProductRecord) {
-  switch (product.template) {
-    case "single":
-      return (
-        <CatalogPage>
-          <SingleTemplateSheet product={product} />
-        </CatalogPage>
-      );
-    case "double":
-    default:
-      return (
-        <CatalogPage>
-          <DoubleTemplateSheet product={product} />
-        </CatalogPage>
-      );
-  }
+  return (
+    <CatalogPage>
+      <DoubleTemplateSheet product={product} />
+    </CatalogPage>
+  );
 }
 
 export default renderByTemplate;

@@ -187,5 +187,61 @@
         "palette": "-"
       }
     ]
+  },
+  {
+    "slug": "boites-pizza-kraft",
+    "name": "Boîtes à pizza en carton kraft – Naturelles et personnalisables",
+    "category": "Vente à emporter",
+    "image": "/images/boite_pizza.png",
+    "heroImage": "/images/pizza_scene.png",
+    "description": "Boîtes à pizza kraft, prêtes à l’emploi et personnalisables.",
+    "template": "double",
+    "variants": [
+      {
+        "reference": "FPK-PBOX26-100",
+        "libelle": "26 x 26 x 4",
+        "format": "26 x 26 x 4",
+        "matiere": "Carton",
+        "cond": "-",
+        "carton": "100",
+        "palette": "90"
+      },
+      {
+        "reference": "FPK-PBOX29-100",
+        "libelle": "29 x 29 x 4",
+        "format": "29 x 29 x 4",
+        "matiere": "Carton",
+        "cond": "-",
+        "carton": "100",
+        "palette": "45"
+      },
+      {
+        "reference": "FPK-PBOX31-100",
+        "libelle": "31 x 31 x 4",
+        "format": "31 x 31 x 4",
+        "matiere": "Carton",
+        "cond": "-",
+        "carton": "100",
+        "palette": "45"
+      },
+      {
+        "reference": "FPK-PBOX33-100",
+        "libelle": "33 x 33 x 4",
+        "format": "33 x 33 x 4",
+        "matiere": "Carton",
+        "cond": "-",
+        "carton": "100",
+        "palette": "45"
+      },
+      {
+        "reference": "FPK-PBOX40-100",
+        "libelle": "40 x 40 x 4",
+        "format": "40 x 40 x 4",
+        "matiere": "Carton",
+        "cond": "-",
+        "carton": "100",
+        "palette": "45"
+      }
+    ]
   }
 ]
