@@ -1,9 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation, Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, Suspense, lazy } from "react";
+
+// === Pages existantes (legacy) ===
 import Cover from "./pages/Cover";
 import Catalogue from "./pages/Catalogue";
 import Home from "./pages/Home";
-import ProductPage from "./pages/ProductPage"; // garde ton fichier existant
+import ProductPage from "./pages/ProductPage";
+
 
 /** Remonte en haut à chaque navigation */
 function ScrollToTop() {
@@ -21,7 +24,10 @@ function NotFound() {
       <div className="text-center">
         <h1 className="text-3xl font-extrabold mb-2">Oups… page introuvable</h1>
         <p className="opacity-70 mb-4">Le lien est peut-être erroné ou la page a été déplacée.</p>
-        <Link to="/" className="inline-block rounded-lg border border-[#17196c]/20 bg-white px-4 py-2 hover:shadow">
+        <Link
+          to="/"
+          className="inline-block rounded-lg border border-[#17196c]/20 bg-white px-4 py-2 hover:shadow"
+        >
           ← Retour à l’accueil
         </Link>
       </div>
@@ -29,27 +35,33 @@ function NotFound() {
   );
 }
 
+/** Petit fallback pendant le lazy-loading */
+function Loading() {
+  return (
+    <div className="min-h-[40vh] grid place-items-center text-[#17196c]">
+      <div className="animate-pulse opacity-70">Chargement…</div>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Routes>
-        {/* 🖼️ Page de garde avec le bouton "Accéder au catalogue" */}
-        <Route path="/" element={<Cover />} />
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          {/* === Pages existantes === */}
+          <Route path="/" element={<Cover />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/catalogue" element={<Catalogue />} />
+          <Route path="/p/:slug" element={<ProductPage />} />
 
-        {/* 🏠 (optionnel) page Home en plus si tu veux une grille d’aperçus */}
-        <Route path="/home" element={<Home />} />
-
-        {/* 📖 Catalogue feuilletable */}
-        <Route path="/catalogue" element={<Catalogue />} />
-
-        {/* 🔍 Fiche produit par slug */}
-        <Route path="/p/:slug" element={<ProductPage />} />
-
-        {/* 🚫 404 */}
-        <Route path="/404" element={<NotFound />} />
-        <Route path="*" element={<Navigate to="/404" replace />} />
-      </Routes>
+          
+          {/* === 404 === */}
+          <Route path="/404" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

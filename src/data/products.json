@@ -10,7 +10,7 @@
     "variants": [
       {
         "reference": "HOT-KIT41B-500",
-        "libelle": "Kits couverts 4/1",
+        "libelle": "Kits  4/1",
         "format": "15 cm",
         "matiere": "Bois",
         "cond": "-",
@@ -19,7 +19,7 @@
       },
       {
         "reference": "HOT-KIT31B-500",
-        "libelle": "Kits couverts 3/1",
+        "libelle": "Kits 3/1",
         "format": "15 cm",
         "matiere": "Bois",
         "cond": "-",
@@ -28,7 +28,7 @@
       },
       {
         "reference": "FOX-COV-300-4-1",
-        "libelle": "Kit couverts 4/1",
+        "libelle": "Kit 4/1",
         "format": "14 cm",
         "matiere": "Papier compressé imperméable",
         "cond": "-",
@@ -37,7 +37,7 @@
       },
       {
         "reference": "FOX-COV-3-1-300",
-        "libelle": "Kit couverts 3/1",
+        "libelle": "Kit 3/1",
         "format": "14 cm",
         "matiere": "Papier compressé imperméable",
         "cond": "-",
@@ -57,18 +57,18 @@
     "variants": [
       {
         "reference": "FOX-COV-OLI-250",
-        "libelle": "Kits couverts 4/1 16 cm",
+        "libelle": "Kits couverts 4/1",
         "format": "16 cm",
-        "matiere": "Noyaux d’olives",
+        
         "cond": "-",
         "carton": "250",
         "palette": "28"
       },
       {
         "reference": "Fox-COV-OLI-250-1",
-        "libelle": "Kit couverts 3/1 16 cm",
+        "libelle": "Kit couverts 3/1",
         "format": "16 cm",
-        "matiere": "Noyaux d’olives",
+        
         "cond": "-",
         "carton": "250",
         "palette": "28"
@@ -77,17 +77,17 @@
   },
   {
     "slug": "boites-economiques-xps",
-    "name": "Boîtes économiques (XPS)",
+    "name": "Boîtes économiques XPS",
     "category": "Vente à emporter",
     "image": "/images/barquette_xps.png",
-    "description": "Boîtes burger et sandwich en XPS.",
+    "description": "Boîtes burger et sandwich.",
     "template": "double",
     "variants": [
       {
         "reference": "KLPD-BURG-125",
         "libelle": "Boîte Burger XPS",
-        "format": "145 x 136 x 75 mm",
-        "matiere": "XPS",
+        "format": "145 x 136x75 mm",
+        
         "cond": "-",
         "carton": "1000",
         "palette": "8"
@@ -96,7 +96,7 @@
         "reference": "KLPD-SAND-125",
         "libelle": "Boîte Sandwich XPS",
         "format": "185 x 133 x 75 mm",
-        "matiere": "XPS",
+      
         "cond": "-",
         "carton": "1000",
         "palette": "5"
@@ -114,8 +114,8 @@
     "variants": [
       {
         "reference": "FOX-STR-20-8-500-OLI-N",
-        "libelle": "Smoothies 20 cm",
-        "format": "8 mm",
+        "libelle": "Smoothies",
+        "format": "8 mm  20 cm",
         "matiere": "Noires – Noyaux d’olive",
         "cond": "-",
         "carton": "500",
@@ -123,8 +123,8 @@
       },
       {
         "reference": "FOX-STR-20-6-250-AVO-N",
-        "libelle": "Classique 20 cm",
-        "format": "6 mm",
+        "libelle": "Classique",
+        "format": "6 mm  20 cm",
         "matiere": "Noires – Noyaux d’avocat",
         "cond": "-",
         "carton": "250",
@@ -132,8 +132,8 @@
       },
       {
         "reference": "FOX-STR-14-6-500-OLI-N",
-        "libelle": "Cocktail 14 cm",
-        "format": "6 mm",
+        "libelle": "Cocktail",
+        "format": "6 mm / 14cm",
         "matiere": "Noires – Noyaux d’olive",
         "cond": "-",
         "carton": "500",
@@ -141,8 +141,8 @@
       },
       {
         "reference": "FOX-STR-20-6-500-OLI-N",
-        "libelle": "Classique 20 cm",
-        "format": "6 mm",
+        "libelle": "Classique",
+        "format": "6 mm 20 cm",
         "matiere": "Noires – Noyaux d’olive",
         "cond": "-",
         "carton": "500",
@@ -150,8 +150,8 @@
       },
       {
         "reference": "PUB-PAILLE-500",
-        "libelle": "Carton 20 cm",
-        "format": "6 mm",
+        "libelle": "Carton",
+        "format": "6 mm 20 cm",
         "matiere": "Carton",
         "cond": "-",
         "carton": "500",

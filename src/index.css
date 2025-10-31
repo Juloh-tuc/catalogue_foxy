@@ -3,3 +3,7 @@
 @tailwind utilities;
 
 html, body, #root { height: 100%; }
+/* neutralise les marges sortantes du dernier bloc */
+[data-catalog-sheet] > :last-child {
+  margin-bottom: 0 !important;
+}

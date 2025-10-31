@@ -1,32 +1,35 @@
 // src/pages/Catalogue.tsx
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import {
-  renderByTemplate,
-  type ProductRecord,
-  FOXY_COLORS,
-  CatalogSheet,
-} from "../templates/ProductTemplates";
+import { renderByTemplate, type ProductRecord } from "../templates/ProductTemplates";
 import Toc from "./Toc";
 import { getProducts } from "../lib/loadProducts";
 import PageBadge from "../components/PageBadge";
 
-/** pages possibles */
+/** Couleurs FoxyTable */
+const FOXY_COLORS = {
+  bleu: "#17196c",
+  orange: "#e5813e",
+  cream: "#fff8f0",
+} as const;
+
+/** Dimensions réelles A4 @96dpi */
+const A4_WIDTH = 794;
+const A4_HEIGHT = 1123;
+
+/** Espacements / rail externe */
+const GRID_GAP_PX = 24;            // gap-6
+const RAIL_WIDTH_PX = 200;         // largeur du rail
+const RAIL_GAP_PX = 10;
+const RAIL_OUTSIDE_OFFSET_PX = -10;  // petit décalage visuel vers l'extérieur
+const TAB_HEIGHT_PX = 68;
+
+/** Types de page */
 type Page =
   | { type: "toc" }
   | { type: "product"; product: ProductRecord };
 
-function BlankSheet() {
-  return (
-    <CatalogSheet>
-      <div className="row-start-1 row-end-5 grid place-items-center">
-        <span className="text-xs opacity-40">— page vide —</span>
-      </div>
-    </CatalogSheet>
-  );
-}
-
-/** Palette */
+/** Couleurs par catégorie (subtitle) */
 const CAT_COLORS: Record<string, string> = {
   "Nos incontournables": "#174A45",
   "Vente à emporter": "#EAA76C",
@@ -44,26 +47,61 @@ const CAT_COLORS: Record<string, string> = {
   "Vente à emporter / XPS": "#EAA76C",
 };
 
-/** Réglages rail (modifiable facilement) */
-const RAIL_WIDTH_PX = 200;         // largeur colonne d’onglets (ex: 190–210)
-const RAIL_GAP_PX = 10;            // écart vertical entre onglets
-const RAIL_OUTSIDE_OFFSET_PX = 6;  // distance du rail par rapport au bord (extérieur)
+/** Feuille A4 : fond crème + footer */
+function PageFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      data-catalog-sheet
+      className="relative rounded-2xl overflow-hidden ring-1 ring-black/5 shadow-xl flex flex-col"
+      style={{ width: A4_WIDTH, minHeight: A4_HEIGHT, background: FOXY_COLORS.cream }}
+    >
+      <div className="flex-1 p-5 lg:p-6">{children}</div>
+      <div className="px-5 lg:px-6 pb-4">
+        <hr className="border-t-2" style={{ borderColor: `${FOXY_COLORS.bleu}99` }} />
+        <div className="mt-1.5 flex items-center justify-between text-[11px] text-black/60">
+          <span>FoxyTable</span>
+          <span>foxytable.com</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-/** Hauteur des onglets (visuel marque-page) */
-const TAB_HEIGHT_PX = 68;          // ex: 64 / 72
+/** Rendu produit protégé */
+function SafeProduct({ product }: { product: ProductRecord }) {
+  try {
+    return <>{renderByTemplate(product)}</>;
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return (
+      <div className="p-4 rounded-xl border bg-red-50 text-red-700">
+        <div className="font-semibold mb-1">Erreur de rendu produit</div>
+        <pre className="text-xs whitespace-pre-wrap">{msg}</pre>
+      </div>
+    );
+  }
+}
 
 export default function Catalogue() {
-  const products = useMemo(() => getProducts(), []);
+  /** Produits */
+  const products = useMemo<ProductRecord[]>(() => {
+    try {
+      const p = getProducts();
+      return Array.isArray(p) ? p : [];
+    } catch {
+      return [];
+    }
+  }, []);
+
+  /** Pages : ToC + produits */
   const pages = useMemo<Page[]>(
     () => [{ type: "toc" as const }, ...products.map((p) => ({ type: "product" as const, product: p }))],
     [products]
   );
 
-  /** double-page si viewport >= lg */
+  /** Double page si >= 1024px */
   const [spread, setSpread] = useState<boolean>(() =>
-    typeof window !== "undefined"
-      ? window.matchMedia("(min-width: 1024px)").matches
-      : false
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)").matches : false
   );
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
@@ -72,17 +110,15 @@ export default function Catalogue() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  /** index de la page gauche (si double) */
+  /** Pagination */
   const [i, setI] = useState(0);
   const step = spread ? 2 : 1;
   const maxIndex = spread ? Math.max(0, pages.length - 2) : pages.length - 1;
-
   const prev = useCallback(() => setI((v) => Math.max(0, v - step)), [step]);
   const next = useCallback(() => setI((v) => Math.min(maxIndex, v + step)), [maxIndex, step]);
-
   useEffect(() => { setI((v) => Math.min(v, maxIndex)); }, [maxIndex]);
 
-  // clavier
+  // ← → clavier
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") prev();
@@ -102,13 +138,13 @@ export default function Catalogue() {
     touchStartX.current = null;
   };
 
-  /** Index de la première page de chaque catégorie */
+  /** 1er index par catégorie */
   const catFirstIndex = useMemo(() => {
     const map = new Map<string, number>();
     pages.forEach((pg, idx) => {
       if (pg.type === "product") {
-        const cat = pg.product.category?.trim() || "Autres";
-        if (!map.has(cat)) map.set(cat, idx);
+        const key = (pg.product.subtitle || "Autres").trim();
+        if (!map.has(key)) map.set(key, idx);
       }
     });
     return map;
@@ -142,7 +178,7 @@ export default function Catalogue() {
         key: c,
         label: c.toUpperCase(),
         color: CAT_COLORS[c] || FOXY_COLORS.orange,
-        targetIndex: catFirstIndex.get(c)!,
+        targetIndex: catFirstIndex.get(c) ?? 0,
       })),
     [orderedCats, catFirstIndex]
   );
@@ -151,22 +187,19 @@ export default function Catalogue() {
     const leftPg = pages[i];
     const rightPg = pages[i + 1];
     const pg =
-      leftPg?.type === "product"
-        ? leftPg
-        : rightPg?.type === "product"
-        ? rightPg
-        : undefined;
-    return pg?.product?.category;
+      leftPg?.type === "product" ? leftPg :
+      rightPg?.type === "product" ? rightPg :
+      undefined;
+    return pg?.product?.subtitle || "Autres";
   }, [pages, i]);
 
   const jumpTo = useCallback(
     (targetIndex: number) => {
-      if (!spread) {
-        setI(targetIndex);
-        return;
+      if (!spread) setI(targetIndex);
+      else {
+        const left = targetIndex % 2 === 0 ? targetIndex : targetIndex - 1;
+        setI(Math.max(0, left));
       }
-      const left = targetIndex % 2 === 0 ? targetIndex : targetIndex - 1;
-      setI(Math.max(0, left));
     },
     [spread]
   );
@@ -215,31 +248,35 @@ export default function Catalogue() {
         </button>
       </div>
 
-      {/* === CONTENEUR DU CATALOGUE — ancre relative et largeur fixe === */}
-      <div className="relative w-[1500px] max-w-full bg-white shadow-xl rounded-2xl overflow-visible">
-        {/* Feuilles (1 ou 2 colonnes) */}
+      {/* Double-page */}
+      <div
+        className="relative w-full mx-auto"
+        style={{
+          // ✅ on réserve l'espace du rail à droite
+          paddingRight: RAIL_WIDTH_PX + RAIL_OUTSIDE_OFFSET_PX + 12,
+          // ✅ largeur maxi = pages + gap + rail (réservé) + marge
+          maxWidth: spread
+            ? (A4_WIDTH * 2 + GRID_GAP_PX + RAIL_WIDTH_PX + RAIL_OUTSIDE_OFFSET_PX + 32)
+            : (A4_WIDTH + RAIL_WIDTH_PX + RAIL_OUTSIDE_OFFSET_PX + 32),
+        }}
+      >
         <div
-          className={`grid ${spread ? "lg:grid-cols-2" : "grid-cols-1"} gap-4 items-start p-8`}
+          className={`grid ${spread ? "lg:grid-cols-2" : "grid-cols-1"} gap-6 items-start`}
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
         >
-          <PageRenderer page={left} pages={pages} />
-          {spread ? (right ? <PageRenderer page={right} pages={pages} /> : <BlankSheet />) : null}
+          <PageRenderer page={left} />
+          {spread ? (right ? <PageRenderer page={right} /> : <BlankSheetInFrame />) : null}
         </div>
 
-        {/* === RAIL EXTÉRIEUR TYPE PUBLIEMBAL === */}
+        {/* Rail externe (desktop) */}
         <div
           className="hidden lg:block absolute inset-y-0 right-0 z-30"
-          // ancre au bord droit, puis décale le rail totalement à l'extérieur
           style={{
             width: RAIL_WIDTH_PX,
-            transform: `translateX(${RAIL_WIDTH_PX + RAIL_OUTSIDE_OFFSET_PX}px)`,
+            transform: `translateX(${RAIL_OUTSIDE_OFFSET_PX}px)`,
           }}
         >
-          {/* tranche (spine) côté page */}
-          <div className="absolute left-0 top-0 h-full w-[6px] bg-black/10" />
-
-          {/* pile d’onglets pleine hauteur */}
           <nav
             aria-label="Navigation catégories"
             className="h-full flex flex-col"
@@ -252,10 +289,7 @@ export default function Catalogue() {
                   key={tab.key}
                   onClick={() => jumpTo(tab.targetIndex)}
                   className={[
-                    "w-full",
-                    `h-[${TAB_HEIGHT_PX}px]`,
-                    "px-4 text-white text-[13px] font-bold text-left",
-                    // droit côté page (gauche), arrondi à l’extérieur (droite)
+                    "w-full px-4 text-white text-[13px] font-bold text-left",
                     "rounded-l-none rounded-r-2xl",
                     "shadow-md hover:brightness-105 transition",
                     active ? "ring-2 ring-white" : "",
@@ -264,7 +298,8 @@ export default function Catalogue() {
                     backgroundColor: tab.color,
                     display: "flex",
                     alignItems: "center",
-                    borderLeft: "4px solid rgba(0,0,0,0.06)", // trait discret côté page
+                    borderLeft: "4px solid rgba(0,0,0,0.06)",
+                    height: TAB_HEIGHT_PX,
                   }}
                   title={tab.key}
                 >
@@ -275,8 +310,8 @@ export default function Catalogue() {
           </nav>
         </div>
 
-        {/* Variante mobile : rubans sous le catalogue */}
-        <div className="lg:hidden border-t border-slate-200/60 p-3 flex gap-2 flex-wrap">
+        {/* Pills mobile */}
+        <div className="lg:hidden mt-4 border-t border-slate-200/60 p-3 flex gap-2 flex-wrap">
           {tabs.map((tab) => {
             const active = tab.key === currentKey;
             return (
@@ -299,24 +334,40 @@ export default function Catalogue() {
   );
 }
 
-/** Rendu d’une feuille + pastille catégorie (overlay dans le coin) */
-function PageRenderer({ page, pages }: { page: Page; pages: Page[] }) {
-  if (page.type === "toc")
-    return (
-      <Toc
-        products={pages
-          .filter((p): p is { type: "product"; product: ProductRecord } => p.type === "product")
-          .map((p) => p.product)}
-      />
-    );
+/** Page vide (droite impaire) */
+function BlankSheetInFrame() {
+  return (
+    <PageFrame>
+      <div className="min-h-[580px] grid place-items-center">
+        <span className="text-xs opacity-40">— page vide —</span>
+      </div>
+    </PageFrame>
+  );
+}
 
-  const cat = page.product.category || "";
+/** Rendu d’une page (helper interne) */
+function PageRenderer({ page }: { page: Page | undefined }) {
+  if (!page) return <BlankSheetInFrame />;
+
+  if (page.type === "toc") {
+    return (
+      <PageFrame>
+        <Toc />
+      </PageFrame>
+    );
+  }
+
+  const cat = page.product.subtitle || "";
   const color = CAT_COLORS[cat] || FOXY_COLORS.orange;
 
   return (
-    <div className="relative transition-transform duration-200">
-      <PageBadge label={cat} color={color} />
-      {renderByTemplate(page.product)}
-    </div>
+    <PageFrame>
+      <div className="relative">
+        <PageBadge label={cat} color={color} />
+        <div className="rounded-2xl overflow-hidden pb-2">
+          <SafeProduct product={page.product} />
+        </div>
+      </div>
+    </PageFrame>
   );
 }
