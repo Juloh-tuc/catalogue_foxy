@@ -13,15 +13,15 @@ const FOXY_COLORS = {
   cream: "#fff8f0",
 } as const;
 
-/** Dimensions réelles A4 @96dpi */
+/** Dimensions A4 @96dpi */
 const A4_WIDTH = 794;
 const A4_HEIGHT = 1123;
 
 /** Espacements / rail externe */
-const GRID_GAP_PX = 24;            // gap-6
-const RAIL_WIDTH_PX = 200;         // largeur du rail
+const GRID_GAP_PX = 24;              // gap-6
+const RAIL_WIDTH_PX = 200;           // largeur du rail
 const RAIL_GAP_PX = 10;
-const RAIL_OUTSIDE_OFFSET_PX = -10;  // petit décalage visuel vers l'extérieur
+const RAIL_OUTSIDE_OFFSET_PX = -10;  // décalage vers l’extérieur (tu as mis -10)
 const TAB_HEIGHT_PX = 68;
 
 /** Types de page */
@@ -29,7 +29,7 @@ type Page =
   | { type: "toc" }
   | { type: "product"; product: ProductRecord };
 
-/** Couleurs par catégorie (subtitle) */
+/** Couleurs par catégorie (on harmonisera plus tard) */
 const CAT_COLORS: Record<string, string> = {
   "Nos incontournables": "#174A45",
   "Vente à emporter": "#EAA76C",
@@ -83,7 +83,7 @@ function SafeProduct({ product }: { product: ProductRecord }) {
 }
 
 export default function Catalogue() {
-  /** Produits */
+  // Produits
   const products = useMemo<ProductRecord[]>(() => {
     try {
       const p = getProducts();
@@ -93,13 +93,13 @@ export default function Catalogue() {
     }
   }, []);
 
-  /** Pages : ToC + produits */
+  // Pages : ToC + produits
   const pages = useMemo<Page[]>(
     () => [{ type: "toc" as const }, ...products.map((p) => ({ type: "product" as const, product: p }))],
     [products]
   );
 
-  /** Double page si >= 1024px */
+  // Double page si >= 1024px
   const [spread, setSpread] = useState<boolean>(() =>
     typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)").matches : false
   );
@@ -110,7 +110,7 @@ export default function Catalogue() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  /** Pagination */
+  // Pagination
   const [i, setI] = useState(0);
   const step = spread ? 2 : 1;
   const maxIndex = spread ? Math.max(0, pages.length - 2) : pages.length - 1;
@@ -118,7 +118,7 @@ export default function Catalogue() {
   const next = useCallback(() => setI((v) => Math.min(maxIndex, v + step)), [maxIndex, step]);
   useEffect(() => { setI((v) => Math.min(v, maxIndex)); }, [maxIndex]);
 
-  // ← → clavier
+  // clavier
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") prev();
@@ -138,7 +138,7 @@ export default function Catalogue() {
     touchStartX.current = null;
   };
 
-  /** 1er index par catégorie */
+  // 1er index par catégorie
   const catFirstIndex = useMemo(() => {
     const map = new Map<string, number>();
     pages.forEach((pg, idx) => {
@@ -252,9 +252,9 @@ export default function Catalogue() {
       <div
         className="relative w-full mx-auto"
         style={{
-          // ✅ on réserve l'espace du rail à droite
+          // réserve l'espace du rail à droite
           paddingRight: RAIL_WIDTH_PX + RAIL_OUTSIDE_OFFSET_PX + 12,
-          // ✅ largeur maxi = pages + gap + rail (réservé) + marge
+          // largeur maxi = pages + gap + rail (réservé) + marge
           maxWidth: spread
             ? (A4_WIDTH * 2 + GRID_GAP_PX + RAIL_WIDTH_PX + RAIL_OUTSIDE_OFFSET_PX + 32)
             : (A4_WIDTH + RAIL_WIDTH_PX + RAIL_OUTSIDE_OFFSET_PX + 32),
@@ -345,7 +345,7 @@ function BlankSheetInFrame() {
   );
 }
 
-/** Rendu d’une page (helper interne) */
+/** Rendu d’une page */
 function PageRenderer({ page }: { page: Page | undefined }) {
   if (!page) return <BlankSheetInFrame />;
 
