@@ -21,7 +21,7 @@ const A4_HEIGHT = 1123;
 const GRID_GAP_PX = 24;              // gap-6
 const RAIL_WIDTH_PX = 200;           // largeur du rail
 const RAIL_GAP_PX = 10;
-const RAIL_OUTSIDE_OFFSET_PX = -10;  // décalage vers l’extérieur (tu as mis -10)
+const RAIL_OUTSIDE_OFFSET_PX = -10;  // décalage vers l’extérieur
 const TAB_HEIGHT_PX = 68;
 
 /** Types de page */
@@ -29,7 +29,7 @@ type Page =
   | { type: "toc" }
   | { type: "product"; product: ProductRecord };
 
-/** Couleurs par catégorie (on harmonisera plus tard) */
+/** Couleurs par catégorie (ajuste au besoin) */
 const CAT_COLORS: Record<string, string> = {
   "Nos incontournables": "#174A45",
   "Vente à emporter": "#EAA76C",
@@ -252,9 +252,7 @@ export default function Catalogue() {
       <div
         className="relative w-full mx-auto"
         style={{
-          // réserve l'espace du rail à droite
           paddingRight: RAIL_WIDTH_PX + RAIL_OUTSIDE_OFFSET_PX + 12,
-          // largeur maxi = pages + gap + rail (réservé) + marge
           maxWidth: spread
             ? (A4_WIDTH * 2 + GRID_GAP_PX + RAIL_WIDTH_PX + RAIL_OUTSIDE_OFFSET_PX + 32)
             : (A4_WIDTH + RAIL_WIDTH_PX + RAIL_OUTSIDE_OFFSET_PX + 32),
@@ -364,7 +362,8 @@ function PageRenderer({ page }: { page: Page | undefined }) {
     <PageFrame>
       <div className="relative">
         <PageBadge label={cat} color={color} />
-        <div className="rounded-2xl overflow-hidden pb-2">
+        {/* pas d'overflow-hidden pour ne pas rogner les images du bas */}
+        <div className="rounded-2xl">
           <SafeProduct product={page.product} />
         </div>
       </div>
